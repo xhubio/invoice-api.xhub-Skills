@@ -1,0 +1,27 @@
+{
+ "invoiceNumber": "RE-2026-11-001",
+ "type": "invoice",
+ "issueDate": "2026-11-02",
+ "dueDate": "2026-11-16",
+ "deliveryDate": "2026-10-31",
+ "orderNumber": "PO-4711",
+ "currency": "EUR",
+ "letter": { "subject": "Softwareentwicklung Oktober", "subtitle": "Gemäß Rahmenvertrag vom 01.09.2026",
+             "salutation": "Sehr geehrte Damen und Herren,", "intro": "für unsere Leistungen im Oktober berechnen wir:" },
+ "seller": { "name": "Muster Software GmbH", "street": "Musterstraße 1", "postalCode": "60311", "city": "Frankfurt am Main",
+             "countryCode": "DE", "vatId": "DE123456788", "email": "rechnung@muster-software.example", "website": "muster-software.example",
+             "phone": "+49 69 000000", "contact": { "name": "Erika Muster" },
+             "bankAccount": { "accountHolder": "Muster Software GmbH", "iban": "DE89370400440532013000", "bic": "COBADEFFXXX", "bankName": "Commerzbank" } },
+ "buyer": { "name": "Beispiel Handel GmbH", "street": "Beispielweg 5", "postalCode": "50667", "city": "Köln", "countryCode": "DE",
+            "vatId": "DE123456788", "contact": { "name": "Max Beispiel" } },
+ "items": [
+  { "position": 1, "description": "Softwareentwicklung Oktober 2026", "quantity": 12, "unit": "HUR", "unitPrice": 95, "taxRate": 19, "taxCategoryCode": "S", "netAmount": 1140, "taxAmount": 216.6, "grossAmount": 1356.6 },
+  { "position": 2, "description": "Hosting Oktober 2026", "quantity": 1, "unit": "MON", "unitPrice": 49, "taxRate": 19, "taxCategoryCode": "S", "netAmount": 49, "taxAmount": 9.31, "grossAmount": 58.31 }
+ ],
+ "subtotal": 1189, "total": 1414.91,
+ "taxSummary": [ { "taxRate": 19, "taxCategoryCode": "S", "netAmount": 1189, "taxAmount": 225.91 } ],
+ "paymentTerms": { "dueDays": 14, "description": "14 Tage netto" },
+ "paymentMethods": [ { "type": "bank_transfer", "details": "SEPA-Überweisung" } ],
+ "countrySpecific": { "countryCode": "DE" },
+ "notes": "Vielen Dank für Ihren Auftrag."
+}

@@ -1,0 +1,12 @@
+.env
+.env.*
+*.pdf
+*.report.json
+invoices/
+__pycache__/
+.DS_Store
+.tmp-check/
+analysis/
+check/
+sample-from-original.json
+template.json

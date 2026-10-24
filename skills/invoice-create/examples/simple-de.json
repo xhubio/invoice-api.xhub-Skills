@@ -1,0 +1,34 @@
+{
+  "invoiceNumber": "RE-2026-11-001",
+  "type": "invoice",
+  "issueDate": "2026-11-02",
+  "dueDate": "2026-11-16",
+  "servicePeriod": { "start": "2026-10-01", "end": "2026-10-31" },
+  "currency": "EUR",
+  "seller": {
+    "name": "Muster Software GmbH",
+    "street": "Musterstraße 1",
+    "postalCode": "60311",
+    "city": "Frankfurt am Main",
+    "countryCode": "DE",
+    "vatId": "DE123456788",
+    "email": "rechnung@muster-software.example",
+    "bankAccount": { "iban": "DE89370400440532013000", "bic": "COBADEFFXXX", "bankName": "Commerzbank" }
+  },
+  "buyer": {
+    "name": "Beispiel Handel GmbH",
+    "street": "Beispielweg 5",
+    "postalCode": "50667",
+    "city": "Köln",
+    "countryCode": "DE"
+  },
+  "items": [
+    { "description": "Softwareentwicklung Oktober 2026", "quantity": 12, "unit": "HUR", "unitPrice": 95, "taxRate": 19 },
+    { "description": "Hosting Oktober 2026", "quantity": 1, "unit": "MON", "unitPrice": 49, "taxRate": 19 },
+    { "description": "Nachlass 10 % auf Hosting", "quantity": -1, "unit": "C62", "unitPrice": 4.9, "taxRate": 19 }
+  ],
+  "paymentTerms": { "dueDays": 14, "description": "Zahlbar innerhalb von 14 Tagen ohne Abzug" },
+  "paymentMethods": [ { "type": "bank_transfer", "details": "SEPA-Überweisung" } ],
+  "countrySpecific": { "countryCode": "DE" },
+  "notes": "Vielen Dank für Ihren Auftrag."
+}

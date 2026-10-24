@@ -1,0 +1,11 @@
+{
+  "name": "xhubio",
+  "owner": { "name": "xhub.io", "email": "pje@xhub.io" },
+  "plugins": [
+    {
+      "name": "invoice-api",
+      "source": "./",
+      "description": "Create, read and validate e-invoices (ZUGFeRD, Factur-X, XRechnung) with invoice-api.xhub.io"
+    }
+  ]
+}

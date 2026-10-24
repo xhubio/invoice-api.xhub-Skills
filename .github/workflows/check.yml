@@ -1,0 +1,22 @@
+name: check
+on:
+  push:
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pdfplumber pillow
+      - run: python3 tools/check_repo.py
+      - name: every script starts (no API key needed for --help)
+        run: |
+          for s in skills/*/scripts/create_invoice.py skills/*/scripts/read_invoice.py \
+                   skills/*/scripts/analyze_pdf.py skills/*/scripts/render_check.py; do
+            python3 "$s" --help > /dev/null || { echo "FAIL $s"; exit 1; }
+          done
+      - name: template example builds
+        run: cd skills/invoice-template-from-pdf/examples && python3 build_template_example.py && python3 -m json.tool template.json > /dev/null
