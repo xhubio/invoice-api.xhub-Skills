@@ -1,5 +1,7 @@
 # invoice-api.xhub.io Skills for Claude
 
+[![skills.sh](https://skills.sh/b/xhubio/invoice-api.xhub-Skills)](https://skills.sh/xhubio/invoice-api.xhub-Skills)
+
 Create, read and validate e-invoices — **ZUGFeRD, Factur-X, XRechnung** (EN 16931) — directly from Claude Code or Claude Desktop, powered by [invoice-api.xhub.io](https://invoice-api.xhub.io).
 
 > German version: [README.de.md](README.de.md)
@@ -21,6 +23,14 @@ Example prompts:
 - Python 3.8+. `invoice-create` and `invoice-read` use the standard library only; `invoice-template-from-pdf` additionally needs `pip install pdfplumber pillow`.
 
 ## Installation
+
+### Any agent (skills CLI, [skills.sh](https://skills.sh/xhubio/invoice-api.xhub-Skills))
+
+```bash
+npx skills add xhubio/invoice-api.xhub-Skills
+```
+
+Works with Claude Code and other agents that read `SKILL.md`. Install a single skill with `--skill invoice-create`.
 
 ### Claude Code (plugin)
 
