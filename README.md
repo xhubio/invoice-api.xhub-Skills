@@ -68,6 +68,10 @@ Run the repository checks with `python3 tools/check_repo.py` (also runs in CI). 
 - Pricing: https://invoice-api.xhub.io/pricing
 - Support: pje@xhub.io
 
+## Author
+
+Patrick Jerominek ([@pa201608](https://github.com/pa201608)) — BeeBack UG (haftungsbeschränkt), [xhub.io](https://xhub.io)
+
 ## License
 
 MIT © BeeBack UG (haftungsbeschränkt) — xhub.io

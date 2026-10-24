@@ -2,9 +2,21 @@
   "name": "invoice-api",
   "version": "0.1.0",
   "description": "Create, read and validate German and EU e-invoices (ZUGFeRD, Factur-X, XRechnung) and rebuild your invoice layout as template, with invoice-api.xhub.io",
-  "author": { "name": "BeeBack UG (haftungsbeschränkt) / xhub.io", "email": "pje@xhub.io", "url": "https://invoice-api.xhub.io" },
+  "author": {
+    "name": "Patrick Jerominek",
+    "email": "pje@xhub.io",
+    "url": "https://github.com/xhubio"
+  },
   "homepage": "https://invoice-api.xhub.io",
   "repository": "https://github.com/xhubio/invoice-api.xhub-Skills",
   "license": "MIT",
-  "keywords": ["e-invoice", "e-rechnung", "zugferd", "xrechnung", "factur-x", "en16931", "invoice"]
+  "keywords": [
+    "e-invoice",
+    "e-rechnung",
+    "zugferd",
+    "xrechnung",
+    "factur-x",
+    "en16931",
+    "invoice"
+  ]
 }

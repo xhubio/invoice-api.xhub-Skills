@@ -77,6 +77,10 @@ python3 skills/invoice-read/scripts/read_invoice.py ./out/RE-2026-11-001.pdf --v
 - Preise: https://invoice-api.xhub.io/pricing
 - Support: pje@xhub.io
 
+## Autor
+
+Patrick Jerominek ([@pa201608](https://github.com/pa201608)) — BeeBack UG (haftungsbeschränkt), [xhub.io](https://xhub.io)
+
 ## Lizenz
 
 MIT © BeeBack UG (haftungsbeschränkt) — xhub.io
