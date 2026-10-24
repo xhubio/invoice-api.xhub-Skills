@@ -9,7 +9,7 @@
  "letter": { "subject": "Softwareentwicklung Oktober", "subtitle": "Gemäß Rahmenvertrag vom 01.09.2026",
              "salutation": "Sehr geehrte Damen und Herren,", "intro": "für unsere Leistungen im Oktober berechnen wir:" },
  "seller": { "name": "Muster Software GmbH", "street": "Musterstraße 1", "postalCode": "60311", "city": "Frankfurt am Main",
-             "countryCode": "DE", "vatId": "DE123456788", "email": "rechnung@muster-software.example", "website": "muster-software.example",
+             "countryCode": "DE", "vatId": "DE123456788", "email": "rechnung@muster.example", "website": "muster.example",
              "phone": "+49 69 000000", "contact": { "name": "Erika Muster" },
              "bankAccount": { "accountHolder": "Muster Software GmbH", "iban": "DE89370400440532013000", "bic": "COBADEFFXXX", "bankName": "Commerzbank" } },
  "buyer": { "name": "Beispiel Handel GmbH", "street": "Beispielweg 5", "postalCode": "50667", "city": "Köln", "countryCode": "DE",
