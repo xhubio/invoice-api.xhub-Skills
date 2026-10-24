@@ -2,7 +2,7 @@
 
 Create, read and validate e-invoices — **ZUGFeRD, Factur-X, XRechnung** (EN 16931) — directly from Claude Code or Claude Desktop, powered by [invoice-api.xhub.io](https://invoice-api.xhub.io).
 
-> **Deutsch:** siehe [README.de.md](README.de.md). E-Rechnungen im Gespräch mit Claude erstellen und prüfen. Claude sammelt die Rechnungsdaten, rechnet die Beträge, erzeugt die ZUGFeRD-PDF oder XRechnung über invoice-api.xhub.io, validiert sie und liest das Ergebnis zur Kontrolle wieder ein.
+> German version: [README.de.md](README.de.md)
 
 | Skill | What it does |
 |---|---|
@@ -11,9 +11,9 @@ Create, read and validate e-invoices — **ZUGFeRD, Factur-X, XRechnung** (EN 16
 | `invoice-template-from-pdf` | Rebuilds your existing invoice PDF as an invoice-api PDF template: measures the original, builds the template, renders it through the API and compares side by side until it matches; checks page breaks and optional fields |
 
 Example prompts:
-- „Erstelle eine Rechnung an Beispiel Handel GmbH über 12 Stunden Entwicklung à 95 € netto, Leistungszeitraum Oktober.“
+- "Create an invoice to Beispiel Handel GmbH for 12 hours of development at €95 net, service period October."
 - "Is this XRechnung valid? What does it contain?"
-- „Baue aus unserer bisherigen Rechnung (rechnung.pdf) eine Vorlage für invoice-api.“
+- "Turn our current invoice (invoice.pdf) into an invoice-api template."
 
 ## Requirements
 
