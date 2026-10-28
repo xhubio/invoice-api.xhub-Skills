@@ -1,22 +1,66 @@
 {
- "source": { "file": "sample-invoice.pdf", "sha256": "135b486c4e0b13d4284c50ef89195f424ea1d234e5aed388ed6ad9d968689f08" },
+ "source": {
+  "file": "sample-invoice.pdf",
+  "sha256": "135b486c4e0b13d4284c50ef89195f424ea1d234e5aed388ed6ad9d968689f08"
+ },
  "invoice": {
   "invoiceNumber": "RE-2026-0042",
   "type": "invoice",
   "issueDate": "2026-07-14",
   "dueDate": "2026-08-13",
-  "servicePeriod": { "start": "2026-07-01", "end": "2026-07-31" },
+  "servicePeriod": {
+   "start": "2026-07-01",
+   "end": "2026-07-31"
+  },
   "orderNumber": "4500012345",
   "currency": "EUR",
-  "seller": { "vatId": "DE123456788" },
-  "buyer": { "name": "Beispiel Kunde AG", "street": "Kundenweg 5", "postalCode": "54321", "city": "Kundenstadt", "countryCode": "DE" },
+  "seller": {
+   "name": "Musterfirma GmbH",
+   "street": "Musterstraße 1",
+   "postalCode": "12345",
+   "city": "Musterstadt",
+   "vatId": "DE123456788",
+   "bankAccount": {
+    "iban": "DE02120300000000202051",
+    "bic": "BYLADEM1001",
+    "bankName": "Deutsche Kreditbank"
+   }
+  },
+  "buyer": {
+   "name": "Beispiel Kunde AG",
+   "street": "Kundenweg 5",
+   "postalCode": "54321",
+   "city": "Kundenstadt",
+   "countryCode": "DE"
+  },
   "items": [
-   { "description": "Consulting services July 2026", "quantity": 10, "unit": "C62", "unitPrice": 150, "taxRate": 19, "netAmount": 1500 },
-   { "description": "Travel expenses", "quantity": 1, "unit": "C62", "unitPrice": 250, "taxRate": 19, "netAmount": 250 }
+   {
+    "description": "Consulting services July 2026",
+    "quantity": 10,
+    "unit": "C62",
+    "unitPrice": 150,
+    "taxRate": 19,
+    "netAmount": 1500
+   },
+   {
+    "description": "Travel expenses",
+    "quantity": 1,
+    "unit": "C62",
+    "unitPrice": 250,
+    "taxRate": 19,
+    "netAmount": 250
+   }
   ],
-  "paymentTerms": { "description": "Payable by 13.08.2026 without deduction." },
+  "paymentTerms": {
+   "description": "Payable by 13.08.2026 without deduction."
+  },
   "subtotal": 1750,
-  "taxSummary": [ { "taxRate": 19, "taxAmount": 332.5 } ],
+  "taxSummary": [
+   {
+    "taxRate": 19,
+    "taxAmount": 332.5
+   }
+  ],
   "total": 2082.5
  },
  "evidence": {
@@ -45,7 +89,14 @@
   "subtotal": "Net total 1.750,00 EUR",
   "taxSummary[0].taxRate": "VAT 19 %",
   "taxSummary[0].taxAmount": "VAT 19 % 332,50 EUR",
-  "total": "Total 2.082,50 EUR"
+  "total": "Total 2.082,50 EUR",
+  "seller.name": "Musterfirma GmbH · Musterstraße 1 · 12345 Musterstadt · VAT ID: DE123456788",
+  "seller.street": "Musterfirma GmbH · Musterstraße 1 · 12345 Musterstadt · VAT ID: DE123456788",
+  "seller.postalCode": "Musterfirma GmbH · Musterstraße 1 · 12345 Musterstadt · VAT ID: DE123456788",
+  "seller.city": "Musterfirma GmbH · Musterstraße 1 · 12345 Musterstadt · VAT ID: DE123456788",
+  "seller.bankAccount.iban": "IBAN DE02120300000000202051 · BIC BYLADEM1001 · Deutsche Kreditbank",
+  "seller.bankAccount.bic": "IBAN DE02120300000000202051 · BIC BYLADEM1001 · Deutsche Kreditbank",
+  "seller.bankAccount.bankName": "IBAN DE02120300000000202051 · BIC BYLADEM1001 · Deutsche Kreditbank"
  },
  "defaults": {
   "type": "no credit-note wording on the document",

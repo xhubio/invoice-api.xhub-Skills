@@ -12,13 +12,19 @@ Usage:
                              [--format zugferd] [--seller invoice-seller.json]
                              [--customers invoice-customers.json] [--log e-invoices/log.jsonl]
                              [--out work/checked.json]
+  python3 pdf_to_einvoice.py remember customer "Beispiel Kunde AG" --set email=ap@example.org
+                             [--set leitwegId=none] [--file invoice-customers.json] [--replace]
+  python3 pdf_to_einvoice.py remember seller --set bankAccount.iban=DE02... [--file invoice-seller.json]
   python3 pdf_to_einvoice.py generate work/checked.json [--out e-invoices]
                              [--log e-invoices/log.jsonl] [--template-id UUID]
 
 extract   writes extract.json (sha256, text per page, scan detection) and text.txt.
           Exit 3 = no text layer (scan); this script does no OCR.
 check     offline, no API call. Writes checked.json with the assembled invoice,
-          checks[] (severity error|warning) and ok. Exit 0 = ok, 1 = errors.
+          checks[] (severity error|warning), ok, and ask[]: master data that is
+          missing (seller profile, buyer e-mail, Leitweg-ID). Exit 0 = ok, 1 = errors.
+remember  saves what the user answered to ask[], validated (e-mail, IBAN, BIC,
+          VAT ID, Leitweg-ID check digits). Never overwrites without --replace.
 generate  only from a checked.json with ok=true. One generate call with
           validate=true, read-back for zugferd/xrechnung, one log line.
           Exit 0 = created and read back.
@@ -252,6 +258,23 @@ def customer_key(name):
     return re.sub(r"\s+", " ", str(name or "")).strip().lower()
 
 
+def get_path(obj, path):
+    for part in path.split("."):
+        if not isinstance(obj, dict) or obj.get(part) in (None, ""):
+            return None
+        obj = obj[part]
+    return obj
+
+
+def has_path(obj, path):
+    *parents, last = path.split(".")
+    for part in parents:
+        if not isinstance(obj, dict) or not isinstance(obj.get(part), dict):
+            return False
+        obj = obj[part]
+    return isinstance(obj, dict) and last in obj
+
+
 # ── extract ────────────────────────────────────────────────────────────────
 
 def extract_pages(pdf):
@@ -403,43 +426,75 @@ def cmd_check(a):
             if isinstance(v, (int, float)) and not isinstance(v, bool) and v < 0 and not p.endswith("quantity"):
                 c.error("CREDIT_NOTE_SIGN", f"{p} is negative: a credit note carries positive amounts, the sign belongs to the type", p)
 
+    # master data that is not on the PDF: asked once, saved with `remember`
+    asks = []
+
+    def ask(target, field, required, why, from_pdf=None, key=None, file=None):
+        asks.append({k: v for k, v in {
+            "target": target, "key": key, "field": field, "required": required, "why": why,
+            "fromPdf": from_pdf, "file": file}.items() if v is not None})
+
     # seller from the profile; the VAT ID on the letterhead must be the profile's
+    pdf_seller = doc.get("seller") or {}
     seller = load_json(a.seller, "seller")
     if seller is None:
-        c.error("NO_SELLER_PROFILE", f"seller profile {a.seller} not found (name, address, vatId, bankAccount, contact)")
+        c.error("NO_SELLER_PROFILE", f"seller profile {a.seller} not found: ask the user, save with `remember seller`")
         seller = {}
-    doc_vat = (doc.get("seller") or {}).get("vatId")
+    doc_vat = pdf_seller.get("vatId")
     if doc_vat and seller.get("vatId") and re.sub(r"\s", "", doc_vat).upper() != re.sub(r"\s", "", seller["vatId"]).upper():
         c.error("SELLER_VATID_MISMATCH", f"VAT ID on the PDF ({doc_vat}) is not the seller profile's ({seller['vatId']}): wrong company?", "seller.vatId")
     if not doc_vat:
         c.warn("SELLER_VATID_NOT_ON_PDF", "no seller VAT ID found on the PDF; the profile's is used")
-    for f in ("name", "street", "postalCode", "city", "countryCode", "vatId"):
-        if seller and not seller.get(f):
+    need = [(f, True, "mandatory seller data") for f in ("name", "street", "postalCode", "city", "countryCode", "vatId")]
+    need.append(("bankAccount.iban", a.format == "xrechnung", "payment by bank transfer (BR-DE-1 for XRechnung)"))
+    need.append(("bankAccount.bic", False, "payment by bank transfer"))
+    for f in ("contact.name", "contact.phone", "contact.email"):
+        need.append((f, a.format == "xrechnung", "seller contact (BR-DE-2/5/6/7 for XRechnung)"))
+    for f, required, why in need:
+        if get_path(seller, f) is not None or (not required and has_path(seller, f)):
+            continue  # set, or asked before and answered "none"
+        ask("seller", f, required, why, get_path(pdf_seller, f), file=a.seller)
+        if required and seller:
             c.error("SELLER_PROFILE_INCOMPLETE", f"seller profile has no {f}", f"seller.{f}")
-    if seller and not (seller.get("bankAccount") or {}).get("iban"):
-        c.warn("NO_BANK_ACCOUNT", "seller profile has no bankAccount.iban (BR-DE-1 for bank transfer)")
-    contact = seller.get("contact") or {}
-    if a.format == "xrechnung" and not all(contact.get(k) for k in ("name", "phone", "email")):
-        c.error("SELLER_CONTACT", "XRechnung needs seller.contact with name, phone and email (BR-DE-2/5/6/7)", "seller.contact")
+    if seller and not get_path(seller, "bankAccount.iban") and a.format != "xrechnung":
+        c.warn("NO_BANK_ACCOUNT", "seller profile has no bankAccount.iban (needed for bank transfer)")
 
     # buyer: what the PDF does not print comes from the customer table
     buyer = dict(doc.get("buyer") or {})
     customers = load_json(a.customers, "customers") or {}
     cust = {customer_key(k): v for k, v in customers.items()}.get(customer_key(buyer.get("name")))
+    name = buyer.get("name")
     if cust:
         for k in ("name", "street", "postalCode", "city", "countryCode", "vatId", "email"):
             if cust.get(k):
                 buyer[k] = cust[k]
     elif a.format == "xrechnung":
-        c.error("CUSTOMER_UNKNOWN", f"buyer {buyer.get('name')!r} is not in {a.customers}: XRechnung needs the Leitweg-ID from there", "buyer.name")
+        c.error("CUSTOMER_UNKNOWN", f"buyer {name!r} is not in {a.customers}: XRechnung needs the Leitweg-ID from there", "buyer.name")
     else:
-        c.warn("CUSTOMER_UNKNOWN", f"buyer {buyer.get('name')!r} is not in {a.customers}: no e-mail address, no buyer reference")
-    ref = (cust or {}).get("leitwegId") or (cust or {}).get("buyerReference")
+        c.warn("CUSTOMER_UNKNOWN", f"buyer {name!r} is not in {a.customers}: no e-mail address, no buyer reference")
+    cust = cust or {}
+    ref = cust.get("leitwegId") or cust.get("buyerReference")
+    if name:
+        if "email" not in cust:
+            ask("customer", "email", False, "where the e-invoice goes; not printed on the PDF", key=name, file=a.customers)
+        if not ref and (a.format == "xrechnung" or not ("leitwegId" in cust or "buyerReference" in cust)):
+            ask("customer", "leitwegId", a.format == "xrechnung",
+                "Leitweg-ID / buyer reference (BT-10); required by public-sector buyers (BR-DE-15)" if a.format == "xrechnung"
+                else "Leitweg-ID or other buyer reference (BT-10), only if the buyer gave you one", key=name, file=a.customers)
+    lid = cust.get("leitwegId")
+    if lid and not leitweg_ok(re.sub(r"\s", "", str(lid)).upper()):
+        msg = f"Leitweg-ID {lid!r} of {name!r} in {a.customers} has a wrong format or wrong check digits"
+        if a.format == "xrechnung":
+            c.error("INVALID_LEITWEG_ID", msg + ": ask the user, `remember customer ... --set leitwegId=... --replace`", "countrySpecific.buyerReference")
+        else:
+            c.warn("INVALID_LEITWEG_ID", msg, "countrySpecific.buyerReference")
     if a.format == "xrechnung" and cust and not ref:
         c.error("NO_BUYER_REFERENCE", "XRechnung needs a Leitweg-ID (leitwegId) in the customer table (BR-DE-15)", "countrySpecific.buyerReference")
     for f in ("street", "postalCode", "city", "countryCode"):
         if not buyer.get(f):
             c.error("MISSING_FIELD", f"buyer.{f} missing (PDF or customer table)", f"buyer.{f}")
+            if name:
+                ask("customer", f, True, "buyer address, not readable from the PDF", key=name, file=a.customers)
 
     # assemble and recompute
     inv = json.loads(json.dumps(doc))
@@ -493,6 +548,7 @@ def cmd_check(a):
         "source": {"file": ext["file"], "sha256": ext["sha256"]},
         "payloadHash": h,
         "checks": c.items,
+        "ask": asks,
         "notFromPdf": {k: v for k, v in defaults.items()},
         "invoice": inv,
     }
@@ -505,10 +561,100 @@ def cmd_check(a):
         "subtotal": inv.get("subtotal"), "tax": [{"rate": r["taxRate"], "amount": r["taxAmount"]} for r in inv.get("taxSummary", [])],
         "total": inv.get("total"), "currency": inv.get("currency"),
         "notFromPdf": res["notFromPdf"],
+        "ask": asks,
         "errors": [x for x in c.items if x["severity"] == "error"],
         "warnings": [x for x in c.items if x["severity"] == "warning"],
     }, ensure_ascii=False, indent=1))
     sys.exit(0 if c.ok else 1)
+
+
+# ── remember ───────────────────────────────────────────────────────────────
+
+SELLER_FIELDS = {"name", "street", "additionalStreet", "postalCode", "city", "countryCode", "vatId", "taxId", "email",
+                 "phone", "contact.name", "contact.phone", "contact.email", "bankAccount.iban", "bankAccount.bic",
+                 "bankAccount.bankName"}
+CUSTOMER_FIELDS = {"name", "street", "postalCode", "city", "countryCode", "vatId", "email", "leitwegId"}
+OPTIONAL_NONE = {"email", "leitwegId", "bankAccount.bic", "bankAccount.iban", "contact.name", "contact.phone",
+                 "contact.email", "vatId", "phone", "taxId"}
+
+
+def leitweg_ok(value):
+    """Leitweg-ID: Grobadressierung, optional Feinadressierung, check digits (ISO/IEC 7064 Mod 97-10)."""
+    if not re.fullmatch(r"\d{2,12}(-[A-Z0-9]{1,30})?-\d{2}", value):
+        return False
+    return int("".join(str(int(ch, 36)) for ch in value.replace("-", ""))) % 97 == 1
+
+
+def iban_ok(value):
+    if not re.fullmatch(r"[A-Z]{2}\d{2}[A-Z0-9]{11,30}", value):
+        return False
+    return int("".join(str(int(ch, 36)) for ch in value[4:] + value[:4])) % 97 == 1
+
+
+def clean_value(field, value):
+    """Normalise and validate one master-data value; SystemExit with a plain reason if it is wrong."""
+    leaf = field.rsplit(".", 1)[-1]
+    v = value.strip()
+    if leaf in ("iban", "vatId", "bic", "countryCode", "leitwegId"):
+        v = re.sub(r"\s", "", v).upper()
+    checks = {
+        "email": (lambda x: re.fullmatch(r"[^@\s]+@[^@\s]+\.[A-Za-z]{2,}", x), "not an e-mail address"),
+        "iban": (iban_ok, "IBAN check digits do not match"),
+        "bic": (lambda x: re.fullmatch(r"[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?", x), "a BIC has 8 or 11 characters"),
+        "vatId": (lambda x: re.fullmatch(r"DE\d{9}", x) if x.startswith("DE") else re.fullmatch(r"[A-Z]{2}[0-9A-Z+*.]{2,12}", x),
+                  "a VAT ID starts with the country code (DE + 9 digits)"),
+        "countryCode": (lambda x: re.fullmatch(r"[A-Z]{2}", x), "ISO country code with 2 letters, e.g. DE"),
+        "leitwegId": (leitweg_ok, "not a valid Leitweg-ID (format or check digits, e.g. 04011000-1234512345-06)"),
+        "phone": (lambda x: len(re.sub(r"\D", "", x)) >= 5, "not a phone number"),
+    }
+    test = checks.get(leaf)
+    if not v or (test and not test[0](v)):
+        raise SystemExit(f"{field}: {value!r} rejected - {test[1] if test else 'empty'}. Nothing was saved.")
+    return v
+
+
+def cmd_remember(a):
+    target = a.target
+    path = a.file or ("invoice-seller.json" if target == "seller" else "invoice-customers.json")
+    allowed = SELLER_FIELDS if target == "seller" else CUSTOMER_FIELDS
+    if target == "customer" and not a.key:
+        raise SystemExit('remember customer needs the buyer name as printed on the PDF, e.g. remember customer "Beispiel Kunde AG" ...')
+    data = load_json(path, target) or {}
+    if target == "customer":
+        match = next((k for k in data if customer_key(k) == customer_key(a.key)), None)
+        rec = data.setdefault(match or re.sub(r"\s+", " ", a.key).strip(), {})
+    else:
+        rec = data
+    changes = []
+    for item in a.set or []:
+        if "=" not in item:
+            raise SystemExit(f"--set needs field=value, got {item!r}")
+        field, value = (x.strip() for x in item.split("=", 1))
+        if field not in allowed:
+            raise SystemExit(f"{field} is not a {target} field. Allowed: {', '.join(sorted(allowed))}")
+        if value.lower() == "none":
+            if field not in OPTIONAL_NONE:
+                raise SystemExit(f"{field} is mandatory and cannot be 'none'.")
+            new = None  # asked, the answer was: there is none
+        else:
+            new = clean_value(field, value)
+        *parents, last = field.split(".")
+        node = rec
+        for part in parents:
+            node = node.setdefault(part, {})
+        old = node.get(last, "<unset>")
+        if last in node and old not in (None, new) and not a.replace:
+            raise SystemExit(f"{field} is already {old!r}; pass --replace to change it to {new!r}. Nothing was saved.")
+        node[last] = new
+        if old != new:
+            changes.append({"field": field, "old": old, "new": new})
+    pc = rec.get("postalCode")
+    if pc and (rec.get("countryCode") or "DE") == "DE" and not re.fullmatch(r"\d{5}", str(pc)):
+        raise SystemExit(f"postalCode {pc!r}: a German postal code has 5 digits. Nothing was saved.")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+        f.write("\n")
+    print(json.dumps({"saved": path, "target": target, "key": a.key, "changes": changes}, ensure_ascii=False, indent=1))
 
 
 # ── generate ───────────────────────────────────────────────────────────────
@@ -605,13 +751,19 @@ def main():
     c.add_argument("--customers", default="invoice-customers.json")
     c.add_argument("--log", default=os.path.join("e-invoices", "log.jsonl"))
     c.add_argument("--out")
+    r = sub.add_parser("remember", help="save master data the user gave (seller profile, customer table)")
+    r.add_argument("target", choices=["seller", "customer"])
+    r.add_argument("key", nargs="?", help="customer: buyer name as printed on the PDF")
+    r.add_argument("--set", action="append", metavar="FIELD=VALUE", help="e.g. email=ap@example.org, leitwegId=none")
+    r.add_argument("--file", help="default invoice-seller.json / invoice-customers.json")
+    r.add_argument("--replace", action="store_true", help="allow changing a value that is already saved")
     g = sub.add_parser("generate", help="generate, read back, log (API)")
     g.add_argument("checked")
     g.add_argument("--out", default="e-invoices")
     g.add_argument("--log")
     g.add_argument("--template-id")
     a = ap.parse_args()
-    {"extract": cmd_extract, "check": cmd_check, "generate": cmd_generate}[a.cmd](a)
+    {"extract": cmd_extract, "check": cmd_check, "remember": cmd_remember, "generate": cmd_generate}[a.cmd](a)
 
 
 if __name__ == "__main__":

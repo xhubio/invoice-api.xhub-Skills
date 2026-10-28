@@ -25,7 +25,8 @@ Field paths: `invoiceNumber`, `servicePeriod.start`, `buyer.city`, `items[0].uni
 | `orderNumber` | BT-13 | buyer's PO / order number only |
 | `contractNumber`, `projectNumber`, `customerNumber` | BT-12/11 | if printed |
 | `currency` | BT-5 | ISO code; quote a snippet with `EUR`/`€` |
-| `seller.vatId` | BT-31 | from the letterhead/footer, only to compare with the seller profile |
+| `seller.vatId` | BT-31 | from the letterhead/footer, compared with the seller profile |
+| `seller.name`, `street`, `postalCode`, `city`, `bankAccount.iban`/`bic`/`bankName`, `contact.*` | BG-4/5/6, BG-17 | if printed; offered to the user as `fromPdf` while the seller profile is not complete, never sent from here |
 | `buyer.name`, `street`, `postalCode`, `city`, `countryCode`, `vatId` | BG-7/8 | address block; `countryCode` usually a default for domestic addresses |
 | `items[].description` | BT-153 | |
 | `items[].quantity`, `unit`, `unitPrice` | BT-129/130/146 | net unit price; `unit` UN/ECE Rec 20 (`C62` piece, `HUR` hour, `DAY`, `MON`, `KGM`, `MTR`, `LS` lump sum) |
@@ -35,7 +36,7 @@ Field paths: `invoiceNumber`, `servicePeriod.start`, `buyer.city`, `items[0].uni
 | `paymentTerms.description`, `paymentTerms.dueDays` | BT-20 | |
 | `notes` | BT-22 | only text meant for the buyer, quoted |
 
-Not from the PDF: the seller block (from `invoice-seller.json`), buyer e-mail and `countrySpecific.buyerReference` (from `invoice-customers.json`), line `position`, all computed amounts.
+Not from the PDF: the seller block that is sent (from `invoice-seller.json`), buyer e-mail and `countrySpecific.buyerReference` (from `invoice-customers.json`), line `position`, all computed amounts.
 
 ## Quotes
 

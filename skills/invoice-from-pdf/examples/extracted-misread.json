@@ -15,7 +15,16 @@
   "orderNumber": "4500012345",
   "currency": "EUR",
   "seller": {
-   "vatId": "DE123456788"
+   "name": "Musterfirma GmbH",
+   "street": "Musterstraße 1",
+   "postalCode": "12345",
+   "city": "Musterstadt",
+   "vatId": "DE123456788",
+   "bankAccount": {
+    "iban": "DE02120300000000202051",
+    "bic": "BYLADEM1001",
+    "bankName": "Deutsche Kreditbank"
+   }
   },
   "buyer": {
    "name": "Beispiel Kunde AG",
@@ -80,7 +89,14 @@
   "subtotal": "Net total 1.750,00 EUR",
   "taxSummary[0].taxRate": "VAT 19 %",
   "taxSummary[0].taxAmount": "VAT 19 % 332,50 EUR",
-  "total": "Total 2.082,50 EUR"
+  "total": "Total 2.082,50 EUR",
+  "seller.name": "Musterfirma GmbH · Musterstraße 1 · 12345 Musterstadt · VAT ID: DE123456788",
+  "seller.street": "Musterfirma GmbH · Musterstraße 1 · 12345 Musterstadt · VAT ID: DE123456788",
+  "seller.postalCode": "Musterfirma GmbH · Musterstraße 1 · 12345 Musterstadt · VAT ID: DE123456788",
+  "seller.city": "Musterfirma GmbH · Musterstraße 1 · 12345 Musterstadt · VAT ID: DE123456788",
+  "seller.bankAccount.iban": "IBAN DE02120300000000202051 · BIC BYLADEM1001 · Deutsche Kreditbank",
+  "seller.bankAccount.bic": "IBAN DE02120300000000202051 · BIC BYLADEM1001 · Deutsche Kreditbank",
+  "seller.bankAccount.bankName": "IBAN DE02120300000000202051 · BIC BYLADEM1001 · Deutsche Kreditbank"
  },
  "defaults": {
   "type": "no credit-note wording on the document",

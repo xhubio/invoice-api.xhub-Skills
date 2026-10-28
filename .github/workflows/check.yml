@@ -30,3 +30,19 @@ jobs:
           if python3 $S check extracted-misread.json --extract /tmp/work/extract.json --log /tmp/work/log.jsonl --out /tmp/work/bad.json; then
             echo "FAIL misread was not detected"; exit 1
           fi
+      - name: pdf-to-e-invoice asks missing master data and saves only valid answers (offline)
+        run: |
+          S=$PWD/skills/invoice-from-pdf/scripts/pdf_to_einvoice.py E=$PWD/skills/invoice-from-pdf/examples
+          mkdir -p /tmp/ask && cd /tmp/ask
+          python3 $S extract $E/sample-invoice.pdf --out work
+          if python3 $S check $E/extracted.json --extract work/extract.json --format xrechnung --out work/c.json > out.json; then
+            echo "FAIL check passed without seller profile and customer"; exit 1
+          fi
+          python3 -c "import json; a=json.load(open('out.json'))['ask']; assert {'bankAccount.iban','leitwegId','email'} <= {x['field'] for x in a}, a"
+          if python3 $S remember customer "Beispiel Kunde AG" --set leitwegId=991-12345-67; then echo "FAIL wrong Leitweg-ID saved"; exit 1; fi
+          python3 $S remember seller --set name="Musterfirma GmbH" --set street="Musterstraße 1" --set postalCode=12345 \
+            --set city=Musterstadt --set countryCode=DE --set vatId=DE123456788 --set bankAccount.iban=DE02120300000000202051 \
+            --set bankAccount.bic=BYLADEM1001 --set contact.name="Erika Muster" --set contact.phone="+49 30 1234567" \
+            --set contact.email=erika.muster@example.com
+          python3 $S remember customer "Beispiel Kunde AG" --set email=ap@example.org --set leitwegId=991-33333TEST-33
+          python3 $S check $E/extracted.json --extract work/extract.json --format xrechnung --out work/c.json

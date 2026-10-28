@@ -16,15 +16,21 @@
 | `NEGATIVE_UNIT_PRICE` | error | BR-27 | negative quantity, positive price |
 | `CREDIT_NOTE_SIGN` | error | negative amount in a credit note | write positive amounts, `type: credit_note` |
 | `DATE_FORMAT` | error | not `YYYY-MM-DD` | |
-| `NO_SELLER_PROFILE`, `SELLER_PROFILE_INCOMPLETE` | error | `invoice-seller.json` missing/incomplete | ask the user once, save it |
+| `NO_SELLER_PROFILE`, `SELLER_PROFILE_INCOMPLETE` | error | `invoice-seller.json` missing/incomplete | ask the `ask[]` entries, save with `remember seller` |
 | `SELLER_VATID_MISMATCH` | error | the PDF is from another company than the profile | wrong profile or wrong PDF — ask |
-| `SELLER_CONTACT` | error | XRechnung without seller contact name/phone/email | add `contact` to the profile |
-| `CUSTOMER_UNKNOWN` | error (XRechnung) / warning | buyer not in the customer table | ask for e-mail and Leitweg-ID, add the entry (key = name as printed) |
-| `NO_BUYER_REFERENCE` | error (XRechnung) | customer entry without `leitwegId` | ask the user |
+| `CUSTOMER_UNKNOWN` | error (XRechnung) / warning | buyer not in the customer table | ask the `ask[]` entries, save with `remember customer "<name as printed>"` |
+| `NO_BUYER_REFERENCE` | error (XRechnung) | customer entry without `leitwegId` | ask the user, `remember customer … --set leitwegId=…` |
+| `INVALID_LEITWEG_ID` | error (XRechnung) / warning | saved Leitweg-ID fails format or check digits | ask the user for the correct one, `remember … --replace` |
 | `DUPLICATE`, `DUPLICATE_SOURCE` | error | same invoice / same PDF already in the log with status ok — **in any format**: an invoice generated as ZUGFeRD is not generated again as XRechnung | nothing to do; it was generated before. One target format per seller |
 | `NUMBER_REUSED` | error | same number and seller VAT ID, different content | a corrected invoice needs a new number or a credit note |
 | `QUOTE_WITHOUT_LABEL` | warning | number/date quoted without its label | quote the label too |
 | `EVIDENCE_UNUSED` | warning | quote for a field that is not in `invoice` | remove it or add the value |
 | `SELLER_VATID_NOT_ON_PDF`, `NO_BANK_ACCOUNT`, `NO_DUE_DATE`, `NO_SERVICE_DATE` | warning | show to the user | |
+
+## `ask[]` — master data to ask for
+
+Each entry: `target` (`seller` | `customer`), `key` (customer: buyer name as printed), `field` (e.g. `bankAccount.iban`, `email`, `leitwegId`), `required`, `why`, and `fromPdf` when the PDF shows a value the user can confirm. Required entries also appear as errors. An optional field saved as `none` is not asked again. XRechnung makes `bankAccount.iban`, `contact.*` and `leitwegId` required.
+
+`remember` refuses (and saves nothing) on: an invalid e-mail, IBAN check digits, BIC length, VAT ID format, Leitweg-ID format or check digits (ISO/IEC 7064 Mod 97-10), a German postal code without 5 digits, `none` for a mandatory field, or changing a saved value without `--replace`.
 
 The duplicate guard reads `e-invoices/log.jsonl` (`--log`). `payloadHash` is the SHA-256 of the canonical invoice JSON, computed the same way as the API's `payloadHash`; `generate` records whether both agree (`payloadHashMatchesApi`).

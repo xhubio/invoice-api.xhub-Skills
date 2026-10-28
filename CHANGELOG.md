@@ -6,6 +6,7 @@ All notable changes to this repository. Versions follow `.claude-plugin/plugin.j
 
 - `skills.sh.json`: grouped repo page on skills.sh with a short explanation per group.
 - Every `SKILL.md` starts with a short user-facing intro (what it does, what you need, an example prompt), shown on the skill pages of skills.sh.
+- `invoice-from-pdf`: missing master data is asked once and saved. `check` lists it in `ask[]` (with the letterhead's values as suggestions); the new `remember` command saves the user's answers to `invoice-seller.json` / `invoice-customers.json`, validated (e-mail, IBAN and Leitweg-ID check digits, BIC, VAT ID, postal code), never overwriting without `--replace`; `none` records an optional field the buyer does not have. The example Leitweg-ID is now the KoSIT test ID `991-33333TEST-33` (the old one had wrong check digits).
 - `invoice-from-pdf`: duplicate guard documented as format-independent (one target format per seller).
 
 ## 0.2.0 — 2026-10-28
