@@ -1,0 +1,21 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Create e-invoices",
+      "description": "Generate validated ZUGFeRD, Factur-X or XRechnung (EN 16931) with invoice-api.xhub.io, from conversation data or from an existing PDF invoice.",
+      "skills": ["invoice-create", "invoice-from-pdf"]
+    },
+    {
+      "title": "Read and check",
+      "description": "Extract the data of an incoming e-invoice and report validation errors before you book or pay it.",
+      "skills": ["invoice-read"]
+    },
+    {
+      "title": "Invoice layout",
+      "description": "Rebuild your own invoice design as an invoice-api template, so the e-invoice looks like your current invoices.",
+      "skills": ["invoice-template-from-pdf"]
+    }
+  ]
+}

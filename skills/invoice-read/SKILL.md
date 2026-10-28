@@ -5,6 +5,12 @@ description: Read and check an incoming or outgoing e-invoice file (ZUGFeRD/Fact
 
 # Read and check an e-invoice with invoice-api.xhub.io
 
+> **What it does:** reads a ZUGFeRD, Factur-X or XRechnung file and tells you in plain words what is in it (number, parties, lines, totals) and whether it is valid, with the rule ID of every error or warning.
+>
+> **You need:** an invoice-api.xhub.io API key (free plan available), Python 3.8+.
+>
+> **Try:** *"Is this XRechnung valid? What does it contain?"*
+
 The script `scripts/read_invoice.py` sends the file to the parse endpoint and prints a summary.
 
 ## Before you start

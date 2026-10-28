@@ -2,6 +2,12 @@
 
 All notable changes to this repository. Versions follow `.claude-plugin/plugin.json`.
 
+## Unreleased
+
+- `skills.sh.json`: grouped repo page on skills.sh with a short explanation per group.
+- Every `SKILL.md` starts with a short user-facing intro (what it does, what you need, an example prompt), shown on the skill pages of skills.sh.
+- `invoice-from-pdf`: duplicate guard documented as format-independent (one target format per seller).
+
 ## 0.2.0 — 2026-10-28
 
 - New skill `invoice-from-pdf`: an ordinary PDF invoice (Word, Excel, ERP) becomes ZUGFeRD/Factur-X/XRechnung. Claude reads the text; `pdf_to_einvoice.py` checks the read: every value needs a verbatim quote that is in the PDF and states the value, line amounts and totals are recomputed against the printed ones (2 cent tolerance), the seller VAT ID on the PDF must match the seller profile, buyer e-mail and Leitweg-ID come from `invoice-customers.json`, credit notes carry positive amounts, scans are rejected (no OCR). Duplicate guard before any API call via a JSON-Lines log (`payloadHash` computed like the API's, source SHA-256, invoice number + seller VAT ID). Offline example with a misread variant runs in CI.

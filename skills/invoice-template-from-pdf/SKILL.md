@@ -5,6 +5,12 @@ description: Rebuild an existing invoice PDF (from Word, an ERP, a designer) as 
 
 # Rebuild an invoice PDF as an invoice-api template
 
+> **What it does:** rebuilds your existing invoice layout (from Word, an ERP or a designer) as an invoice-api.xhub.io template, so your e-invoices look like your invoices today. Claude measures the original, builds the template, renders it through the API and compares side by side until it matches, including page breaks.
+>
+> **You need:** an invoice-api.xhub.io API key, Python 3.8+, `pip install pdfplumber pillow`.
+>
+> **Try:** *"Turn our current invoice (invoice.pdf) into an invoice-api template."*
+
 Do not eyeball. Measure the original, build with the helpers, render through the API, compare, correct. Repeat at most 5 rounds, then report what is left.
 
 ## Setup

@@ -5,6 +5,12 @@ description: Turn an existing PDF invoice (written in Word, Excel or an ERP, no 
 
 # PDF invoice → e-invoice with invoice-api.xhub.io
 
+> **What it does:** turns the PDF invoices you already write in Word, Excel or your ERP into ZUGFeRD or XRechnung. Claude reads the PDF; a script checks every value against a verbatim quote from the PDF and recomputes the totals, so a misread is refused instead of sent. Buyer e-mail and Leitweg-ID come from a small customer table, duplicates are caught before any API call.
+>
+> **You need:** an invoice-api.xhub.io API key, Python 3.8+, `pdftotext` or `pip install pdfplumber`, your company data in `invoice-seller.json`.
+>
+> **Try:** *"Turn invoice-0042.pdf into a ZUGFeRD e-invoice."*
+
 You read the PDF; the script `scripts/pdf_to_einvoice.py` checks your read. A language model reads invoices well and now and then a little wrong, which is the worst error an invoice can have. So **every value you take from the PDF carries a verbatim quote**, and the script refuses anything it cannot find in the PDF text or that does not add up. Never work around a failed check by changing a quote or a printed total; fix the read.
 
 ## Before you start

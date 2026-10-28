@@ -5,6 +5,12 @@ description: Create a German or EU e-invoice (ZUGFeRD/Factur-X PDF or XRechnung 
 
 # Create an e-invoice with invoice-api.xhub.io
 
+> **What it does:** writes a German or EU e-invoice from what you tell Claude — ZUGFeRD/Factur-X (PDF with embedded XML) or XRechnung (XML). Line amounts, VAT and totals are computed, the invoice is validated by [invoice-api.xhub.io](https://invoice-api.xhub.io) and read back before it is saved.
+>
+> **You need:** an invoice-api.xhub.io API key (free plan available), Python 3.8+.
+>
+> **Try:** *"Create an invoice to Beispiel Handel GmbH for 12 hours of development at €95 net, service period October."*
+
 The script `scripts/create_invoice.py` does the API work. Your job is to collect correct data, build the JSON, run the script and report the result honestly.
 
 ## Before you start
