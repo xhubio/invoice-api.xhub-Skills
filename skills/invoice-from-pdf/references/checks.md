@@ -21,7 +21,7 @@
 | `SELLER_CONTACT` | error | XRechnung without seller contact name/phone/email | add `contact` to the profile |
 | `CUSTOMER_UNKNOWN` | error (XRechnung) / warning | buyer not in the customer table | ask for e-mail and Leitweg-ID, add the entry (key = name as printed) |
 | `NO_BUYER_REFERENCE` | error (XRechnung) | customer entry without `leitwegId` | ask the user |
-| `DUPLICATE`, `DUPLICATE_SOURCE` | error | same invoice / same PDF already in the log with status ok | nothing to do; it was generated before |
+| `DUPLICATE`, `DUPLICATE_SOURCE` | error | same invoice / same PDF already in the log with status ok — **in any format**: an invoice generated as ZUGFeRD is not generated again as XRechnung | nothing to do; it was generated before. One target format per seller |
 | `NUMBER_REUSED` | error | same number and seller VAT ID, different content | a corrected invoice needs a new number or a credit note |
 | `QUOTE_WITHOUT_LABEL` | warning | number/date quoted without its label | quote the label too |
 | `EVIDENCE_UNUSED` | warning | quote for a field that is not in `invoice` | remove it or add the value |

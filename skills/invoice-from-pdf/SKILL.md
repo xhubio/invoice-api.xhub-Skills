@@ -13,6 +13,7 @@ You read the PDF; the script `scripts/pdf_to_einvoice.py` checks your read. A la
 - **Seller profile** `invoice-seller.json` (same file `invoice-create` uses): name, address, `vatId`, `bankAccount`, `contact` (name, phone, email; required for XRechnung). The PDF's letterhead is only compared with it, never copied.
 - **Customer table** `invoice-customers.json`: buyer name as printed → `email`, `leitwegId` (BT-10), optional address/`vatId` that win over the PDF. Neither e-mail nor Leitweg-ID is on a normal PDF invoice. Without an entry, XRechnung stops; ZUGFeRD goes through with a warning. See `examples/`.
 - Several companies or departments: one seller profile and customer table each, passed with `--seller` / `--customers`.
+- One target format per seller. The duplicate guard knows an invoice by its content, not its format: once generated as ZUGFeRD, it is refused as XRechnung.
 - Every `generate` counts against the quota. `extract` and `check` are free; iterate there.
 - Only process PDFs the user gave you. They hold personal and business data.
 
