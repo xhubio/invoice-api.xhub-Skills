@@ -2,7 +2,7 @@
 
 All notable changes to this repository. Versions follow `.claude-plugin/plugin.json`.
 
-## Unreleased
+## 0.3.0 — 2026-10-28
 
 - `skills.sh.json`: grouped repo page on skills.sh with a short explanation per group.
 - Every `SKILL.md` starts with a short user-facing intro (what it does, what you need, an example prompt), shown on the skill pages of skills.sh.

@@ -1,6 +1,6 @@
 {
   "name": "invoice-api",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Create, read and validate German and EU e-invoices (ZUGFeRD, Factur-X, XRechnung), turn existing PDF invoices into e-invoices and rebuild your invoice layout as template, with invoice-api.xhub.io",
   "author": {
     "name": "Patrick Jerominek",
