@@ -10,18 +10,20 @@ E-Rechnungen im Gespräch mit Claude erstellen, prüfen und gestalten – **ZUGF
 |---|---|
 | `invoice-create` | Fragt die Rechnungsdaten ab, rechnet Positionen, Umsatzsteuer und Summen, erzeugt ZUGFeRD/Factur-X/XRechnung mit Validierung, liest das Ergebnis zur Kontrolle wieder ein und legt PDF/XML, JSON und Prüfbericht ab |
 | `invoice-read` | Liest eine E-Rechnung (PDF oder XML) aus: Nummer, Absender, Empfänger, Positionen, Summen – und meldet Fehler und Warnungen |
+| `invoice-from-pdf` | Macht aus einer gewöhnlichen PDF-Rechnung (aus Word, Excel oder dem ERP) eine ZUGFeRD-Rechnung oder XRechnung: Claude liest das PDF, jeder Wert wird gegen ein wörtliches Zitat aus dem PDF geprüft, die Summen werden nachgerechnet und mit den gedruckten verglichen, Käufer-Mail und Leitweg-ID kommen aus einer Kundentabelle, Dubletten werden abgewiesen. Das KI-Gegenstück zum [n8n-Template](https://invoice-api.xhub.io/docs/integrations/n8n/templates/pdf-to-erechnung-per-department) |
 | `invoice-template-from-pdf` | Baut Ihre bisherige Rechnung (PDF aus Word, ERP oder vom Designer) als Vorlage für invoice-api nach: vermisst das Original, baut die Vorlage, rendert sie über die API und vergleicht Seite an Seite, bis sie passt. Prüft Seitenumbrüche und fehlende optionale Felder |
 
 So sprechen Sie Claude an:
 - „Erstelle eine Rechnung an Beispiel Handel GmbH über 12 Stunden Entwicklung à 95 € netto, Leistungszeitraum Oktober.“
 - „Mach daraus eine XRechnung für die Stadt Beispielstadt, Leitweg-ID 04011000-1234512345-06.“
+- „Mach aus rechnung-0042.pdf eine ZUGFeRD-Rechnung.“
 - „Ist diese XRechnung gültig? Was steht drin?“
 - „Baue aus unserer bisherigen Rechnung (rechnung.pdf) eine Vorlage für invoice-api.“
 
 ## Voraussetzungen
 
 - Ein Konto bei invoice-api.xhub.io und ein API-Key – es gibt einen kostenlosen Tarif. Jeder API-Aufruf zählt auf das Kontingent Ihres Tarifs.
-- Python 3.8 oder neuer. `invoice-create` und `invoice-read` brauchen nur die Standardbibliothek, `invoice-template-from-pdf` zusätzlich `pip install pdfplumber pillow`.
+- Python 3.8 oder neuer. `invoice-create` und `invoice-read` brauchen nur die Standardbibliothek, `invoice-from-pdf` braucht `pdftotext` (poppler) oder `pip install pdfplumber`, `invoice-template-from-pdf` `pip install pdfplumber pillow`.
 
 ## Installation
 

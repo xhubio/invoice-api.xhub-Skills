@@ -10,3 +10,6 @@ analysis/
 check/
 sample-from-original.json
 template.json
+skills/invoice-from-pdf/examples/work/
+e-invoices/
+!skills/invoice-from-pdf/examples/sample-invoice.pdf

@@ -1,0 +1,57 @@
+{
+ "source": { "file": "sample-invoice.pdf", "sha256": "135b486c4e0b13d4284c50ef89195f424ea1d234e5aed388ed6ad9d968689f08" },
+ "invoice": {
+  "invoiceNumber": "RE-2026-0042",
+  "type": "invoice",
+  "issueDate": "2026-07-14",
+  "dueDate": "2026-08-13",
+  "servicePeriod": { "start": "2026-07-01", "end": "2026-07-31" },
+  "orderNumber": "4500012345",
+  "currency": "EUR",
+  "seller": { "vatId": "DE123456788" },
+  "buyer": { "name": "Beispiel Kunde AG", "street": "Kundenweg 5", "postalCode": "54321", "city": "Kundenstadt", "countryCode": "DE" },
+  "items": [
+   { "description": "Consulting services July 2026", "quantity": 10, "unit": "C62", "unitPrice": 150, "taxRate": 19, "netAmount": 1500 },
+   { "description": "Travel expenses", "quantity": 1, "unit": "C62", "unitPrice": 250, "taxRate": 19, "netAmount": 250 }
+  ],
+  "paymentTerms": { "description": "Payable by 13.08.2026 without deduction." },
+  "subtotal": 1750,
+  "taxSummary": [ { "taxRate": 19, "taxAmount": 332.5 } ],
+  "total": 2082.5
+ },
+ "evidence": {
+  "invoiceNumber": "Invoice No.: RE-2026-0042",
+  "issueDate": "Invoice date: 14.07.2026",
+  "dueDate": "Due date: 13.08.2026",
+  "servicePeriod.start": "we invoice the following services for July 2026",
+  "servicePeriod.end": "we invoice the following services for July 2026",
+  "orderNumber": "Order No.: 4500012345",
+  "currency": "1.500,00 EUR",
+  "seller.vatId": "VAT ID: DE123456788",
+  "buyer.name": "Beispiel Kunde AG",
+  "buyer.street": "Kundenweg 5",
+  "buyer.postalCode": "54321 Kundenstadt",
+  "buyer.city": "54321 Kundenstadt",
+  "items[0].description": "Consulting services July 2026",
+  "items[0].quantity": "10 x 150,00",
+  "items[0].unitPrice": "10 x 150,00",
+  "items[0].taxRate": "VAT 19 %",
+  "items[0].netAmount": "10 x 150,00 1.500,00 EUR",
+  "items[1].description": "Travel expenses",
+  "items[1].unitPrice": "Travel expenses 250,00 EUR",
+  "items[1].taxRate": "VAT 19 %",
+  "items[1].netAmount": "Travel expenses 250,00 EUR",
+  "paymentTerms.description": "Payable by 13.08.2026 without deduction.",
+  "subtotal": "Net total 1.750,00 EUR",
+  "taxSummary[0].taxRate": "VAT 19 %",
+  "taxSummary[0].taxAmount": "VAT 19 % 332,50 EUR",
+  "total": "Total 2.082,50 EUR"
+ },
+ "defaults": {
+  "type": "no credit-note wording on the document",
+  "buyer.countryCode": "address without country line, domestic",
+  "items[0].unit": "\"10 x\" counts units, no unit printed: C62 (piece)",
+  "items[1].quantity": "no quantity printed: 1, the line amount is the unit price",
+  "items[1].unit": "no unit printed: C62 (piece)"
+ }
+}

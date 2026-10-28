@@ -10,17 +10,19 @@ Create, read and validate e-invoices — **ZUGFeRD, Factur-X, XRechnung** (EN 16
 |---|---|
 | `invoice-create` | Collects invoice data, computes line amounts, VAT and totals, generates ZUGFeRD/Factur-X/XRechnung with validation, reads the result back and saves PDF/XML + JSON + report |
 | `invoice-read` | Reads an e-invoice file (PDF or XML), extracts number, parties, lines and totals, and reports validation errors and warnings |
+| `invoice-from-pdf` | Turns an ordinary PDF invoice (from Word, Excel or an ERP) into ZUGFeRD/XRechnung: Claude reads the PDF, every value is checked against a verbatim quote from the PDF, totals are recomputed against the printed ones, buyer e-mail and Leitweg-ID come from a customer table, duplicates are refused. The AI counterpart of the [n8n template](https://invoice-api.xhub.io/docs/integrations/n8n/templates/pdf-to-erechnung-per-department) |
 | `invoice-template-from-pdf` | Rebuilds your existing invoice PDF as an invoice-api PDF template: measures the original, builds the template, renders it through the API and compares side by side until it matches; checks page breaks and optional fields |
 
 Example prompts:
 - "Create an invoice to Beispiel Handel GmbH for 12 hours of development at €95 net, service period October."
+- "Turn invoice-0042.pdf into a ZUGFeRD e-invoice."
 - "Is this XRechnung valid? What does it contain?"
 - "Turn our current invoice (invoice.pdf) into an invoice-api template."
 
 ## Requirements
 
 - An invoice-api.xhub.io account and API key — free plan available at [invoice-api.xhub.io](https://invoice-api.xhub.io). Every API call counts against your plan's quota.
-- Python 3.8+. `invoice-create` and `invoice-read` use the standard library only; `invoice-template-from-pdf` additionally needs `pip install pdfplumber pillow`.
+- Python 3.8+. `invoice-create` and `invoice-read` use the standard library only; `invoice-from-pdf` needs `pdftotext` (poppler) or `pip install pdfplumber`; `invoice-template-from-pdf` needs `pip install pdfplumber pillow`.
 
 ## Installation
 
@@ -58,7 +60,7 @@ INVOICE_XHUB_TEMPLATE_ID=<uuid of a saved PDF template>
 INVOICE_XHUB_URL=https://service.invoice-api.xhub.io
 ```
 
-Optional: an `invoice-seller.json` in the working directory with your company data (`name`, address, `vatId`, `bankAccount`). `invoice-create` then uses it as seller without asking.
+Optional: an `invoice-seller.json` in the working directory with your company data (`name`, address, `vatId`, `bankAccount`). `invoice-create` then uses it as seller without asking; `invoice-from-pdf` requires it and compares it with the PDF letterhead. `invoice-from-pdf` also reads an `invoice-customers.json` (buyer name → e-mail, Leitweg-ID), because neither is printed on a normal PDF invoice.
 
 The key is never printed or written into generated files. Do not commit `.env` (it is in `.gitignore`).
 
@@ -68,6 +70,11 @@ The key is never printed or written into generated files. Do not commit `.env` (
 python3 skills/invoice-create/scripts/create_invoice.py skills/invoice-create/examples/simple-de.json --out ./out
 python3 skills/invoice-create/scripts/create_invoice.py skills/invoice-create/examples/xrechnung-de.json --format xrechnung --out ./out
 python3 skills/invoice-read/scripts/read_invoice.py ./out/RE-2026-11-001.pdf --validate
+
+cd skills/invoice-from-pdf/examples
+python3 ../scripts/pdf_to_einvoice.py extract sample-invoice.pdf --out work
+python3 ../scripts/pdf_to_einvoice.py check extracted.json --extract work/extract.json --out work/checked.json   # offline
+python3 ../scripts/pdf_to_einvoice.py generate work/checked.json --out e-invoices
 ```
 
 Run the repository checks with `python3 tools/check_repo.py` (also runs in CI). Changes: [CHANGELOG.md](CHANGELOG.md).

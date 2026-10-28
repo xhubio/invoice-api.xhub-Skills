@@ -1,0 +1,11 @@
+{
+ "name": "Musterfirma GmbH",
+ "street": "Musterstraße 1",
+ "postalCode": "12345",
+ "city": "Musterstadt",
+ "countryCode": "DE",
+ "vatId": "DE123456788",
+ "email": "invoices@example.com",
+ "contact": { "name": "Erika Muster", "phone": "+49 30 1234567", "email": "erika.muster@example.com" },
+ "bankAccount": { "iban": "DE02120300000000202051", "bic": "BYLADEM1001", "bankName": "Deutsche Kreditbank" }
+}

@@ -15,8 +15,18 @@ jobs:
       - name: every script starts (no API key needed for --help)
         run: |
           for s in skills/*/scripts/create_invoice.py skills/*/scripts/read_invoice.py \
-                   skills/*/scripts/analyze_pdf.py skills/*/scripts/render_check.py; do
+                   skills/*/scripts/analyze_pdf.py skills/*/scripts/render_check.py \
+                   skills/*/scripts/pdf_to_einvoice.py; do
             python3 "$s" --help > /dev/null || { echo "FAIL $s"; exit 1; }
           done
       - name: template example builds
         run: cd skills/invoice-template-from-pdf/examples && python3 build_template_example.py && python3 -m json.tool template.json > /dev/null
+      - name: pdf-to-e-invoice check catches a misread (offline, no API key)
+        run: |
+          cd skills/invoice-from-pdf/examples
+          S=../scripts/pdf_to_einvoice.py
+          python3 $S extract sample-invoice.pdf --out /tmp/work
+          python3 $S check extracted.json --extract /tmp/work/extract.json --format xrechnung --log /tmp/work/log.jsonl
+          if python3 $S check extracted-misread.json --extract /tmp/work/extract.json --log /tmp/work/log.jsonl --out /tmp/work/bad.json; then
+            echo "FAIL misread was not detected"; exit 1
+          fi

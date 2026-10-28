@@ -4,18 +4,25 @@
 - every Python file compiles
 - every skills/*/SKILL.md has front matter with name == folder name and a description <= 1024 chars
 - the API client copies in skills/*/scripts/invoice_api.py are identical
-- no .env file and no API key pattern is committed
+- no .env file and no API key pattern is committed (files git would commit)
 """
 import hashlib
 import json
 import pathlib
 import py_compile
 import re
+import subprocess
 import sys
 
 root = pathlib.Path(__file__).resolve().parent.parent
 skip = {".git", "__pycache__", ".tmp-check", "node_modules"}
 files = [p for p in root.rglob("*") if p.is_file() and not (set(p.relative_to(root).parts) & skip)]
+try:  # only what git would commit: a local, ignored .env with the user's key is fine
+    listed = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"], cwd=root,
+                            capture_output=True, text=True, check=True).stdout.splitlines()
+    files = [p for p in files if str(p.relative_to(root)) in set(listed)]
+except (OSError, subprocess.CalledProcessError):
+    pass
 errors = []
 
 for p in files:
